@@ -21,9 +21,13 @@ class FileAnnotation201501Encoder(AnnotationEncoder):
 
     def encode(self, obj):
         v = super(FileAnnotation201501Encoder, self).encode(obj)
-        self.set_if_not_none(v, 'Value', obj.file)
+        if obj.file is not None and obj.file.isLoaded():
+            # TODO: if not loaded, list ID?
+            encoder = self.ctx.get_encoder(obj.file.__class__)
+            self.set_if_not_none(
+                v, 'Value', encoder.encode(obj.file)
+            )
         return v
-
 
 class FileAnnotation201606Encoder(FileAnnotation201501Encoder):
 
